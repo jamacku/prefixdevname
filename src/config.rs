@@ -289,9 +289,9 @@ impl NetSetupLinkConfig {
             let hwaddr = mac;
 
             self.config
-                .insert(hwaddr.to_string(), PrefixedLink::new(name)?);
+                .insert(hwaddr.to_string(), PrefixedLink::new(&name)?);
             self.links
-                .push(PrefixedLink::new_with_hwaddr(name, hwaddr)?);
+                .push(PrefixedLink::new_with_hwaddr(&name, &hwaddr)?);
         }
         Ok(())
     }
