@@ -1,9 +1,14 @@
 # prefixdevname
 
-Simple udev helper that let's you define your own prefix used for NIC naming.
+[![Build and Coverage][build-status]][build] [![codecov][coverage-status]][coverage]
 
-## Code status
-[![Build Status](https://travis-ci.org/msekletar/prefixdevname.svg?branch=master)](https://travis-ci.org/msekletar/prefixdevname)
+[build]: https://github.com/msekletar/prefixdevname/actions/workflows/test.yml
+[build-status]: https://github.com/msekletar/prefixdevname/actions/workflows/test.yml/badge.svg
+
+[coverage]: https://codecov.io/gh/msekletar/prefixdevname
+[coverage-status]: https://codecov.io/gh/msekletar/prefixdevname/branch/main/graph/badge.svg
+
+Simple udev helper that let's you define your own prefix used for NIC naming.
 
 ## License
 
