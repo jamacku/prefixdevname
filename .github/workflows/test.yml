@@ -4,22 +4,17 @@ name: Build and Coverage
 on:
   pull_request:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 permissions:
   contents: read
 
 env:
-  PROJECT_NAME_UNDERSCORE: prefixdevname
-  CARGO_INCREMENTAL: 0
-  RUSTFLAGS: -Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort
-  RUSTDOCFLAGS: -Cpanic=abort
   CACHE_NAME: cache-dependencies
 
 jobs:
-  build:
-    name: Build and Test Coverage
+  test:
+    name: Test suite
     runs-on: ubuntu-latest
 
     steps:
@@ -31,35 +26,23 @@ jobs:
 
       - uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: nightly
           override: true
 
-      - name: Compile
-        run: cargo build
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
+      - name: Test
+        uses: actions-rs/cargo@v1
         with:
-          path: |
-            ~/.cargo/.crates.toml
-            ~/.cargo/.crates2.json
-            ~/.cargo/bin
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            target
-          key: ${{ runner.os }}-build-${{ env.CACHE_NAME }}-${{ hashFiles('Cargo.lock') }}
-
-      - name: Install coverage dependencies
-        run: cargo install cargo2junit grcov
-
-      - name: Test coverage report
-        run: |
-          # shellcheck disable=SC2086
-          cargo test $CARGO_OPTIONS -- -Z unstable-options --format json | cargo2junit > results.xml
-          # shellcheck disable=SC2046
-          zip -0 ccov.zip $(find . \( -name "$PROJECT_NAME_UNDERSCORE*.gc*" \) -print)
-          grcov ccov.zip -s . -t lcov --llvm --ignore-not-existing --ignore "/*" --ignore "tests/*" -o lcov.info
+          command: test
+          args: --all-features --no-fail-fast
+        env:
+          CARGO_INCREMENTAL: '0'
+          RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
+          RUSTDOCFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
+      
+      - name: Generate coverage data
+        uses: actions-rs/grcov@v0.1
+        with:
+          report: ./lcov.info
 
       - name: CodeCov
         uses: codecov/codecov-action@v3
