@@ -202,6 +202,7 @@ impl NetSetupLinkConfig {
         for device in enumerate.scan_devices()? {
             let name = device
                 .sysname()
+                .unwrap()
                 .to_str()
                 .ok_or("Failed to convert from ffi::OsStr to &str");
 

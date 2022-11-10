@@ -7,6 +7,9 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
+extern crate libudev;
+use libudev::Device;
+
 use crate::sema::*;
 
 pub fn rename_needed(ifname: &str, prefix: &str) -> Result<bool, Box<dyn Error>> {
@@ -75,8 +78,7 @@ pub fn hwaddr_from_event_device() -> Result<String, Box<dyn Error>> {
 
     syspath.push_str(&devpath);
 
-    let attr = udev
-        .device_from_syspath(&PathBuf::from(syspath))?
+    let attr = Device::from_syspath(&udev, &PathBuf::from(syspath))?
         .attribute_value("address")
         .ok_or("Failed to get MAC Address")?
         .to_owned();
