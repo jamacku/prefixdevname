@@ -69,25 +69,19 @@ jobs:
       - name: Test + Coverage
         # -Z flag is available only on rust nightly
         if: ${{ matrix.coverage == true }}
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --no-fail-fast
-        env:
-          CARGO_INCREMENTAL: '0'
-          RUSTFLAGS: '-Cinstrument-coverage -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
-          RUSTDOCFLAGS: '-Cinstrument-coverage -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
+        run: rustup update ${{ matrix.rust }}
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Generate coverage data
-        if: ${{ matrix.coverage == true }}
-        id: coverage
-        uses: actions-rs/grcov@v0.1
+        run: cargo llvm-cov --all-features --workspace --codecov --output-path lcov.info
 
       - name: CodeCov - Upload coverage data
         if: ${{ matrix.coverage == true }}
         uses: codecov/codecov-action@v4
         with:
-          files: ${{ steps.coverage.outputs.report }}
+          files: lcov.info
           fail_ci_if_error: false
 
   rustfmt:
