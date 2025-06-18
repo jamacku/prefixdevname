@@ -69,7 +69,7 @@ jobs:
       - name: Test + Coverage
         # -Z flag is available only on rust nightly
         if: ${{ matrix.coverage == true }}
-        run: rustup update ${{ matrix.rust }}
+        run: rustup update stable
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
