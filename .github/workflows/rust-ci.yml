@@ -126,8 +126,11 @@ jobs:
           profile: minimal
           components: clippy
 
+      - name: Update package cache
+        run:  sudo apt-get update
+
       - name: Install libudev devel package
-        run: sudo apt install -y libudev-dev
+        run: sudo apt-get install -y libudev-dev
 
       - name: Run Clippy
         uses: actions-rs/cargo@v1
