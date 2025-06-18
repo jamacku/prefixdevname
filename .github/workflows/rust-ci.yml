@@ -25,11 +25,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [ stable, beta, nightly ]
-        fedora: [ 35, 36, 37, rawhide ]
+        rust: [ stable, beta ]
+        fedora: [ 42, rawhide ]
         include:
-          - rust: nightly
-            fedora: 37
+          - rust: stable
+            fedora: 42
             coverage: true
     
     runs-on: ubuntu-latest
@@ -54,7 +54,7 @@ jobs:
         # https://trendoceans.com/fix-linker-cc-not-found/
         # required by prefixdevname: libudev-devel umockdev-devel
         run: |
-          sudo dnf groupinstall -y "Development Tools"
+          sudo dnf group install -y c-development
           sudo dnf install -y \
             libudev-devel \
             umockdev-devel
