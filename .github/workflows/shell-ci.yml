@@ -3,6 +3,7 @@
 name: Shell CI
 on:
   push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
