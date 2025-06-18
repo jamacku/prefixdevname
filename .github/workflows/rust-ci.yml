@@ -27,6 +27,10 @@ jobs:
       matrix:
         rust: [ stable, beta ]
         fedora: [ 42, rawhide ]
+        include:
+          - rust: nightly
+            fedora: rawhide
+            coverage: true
     
     runs-on: ubuntu-latest
     container:
@@ -61,6 +65,24 @@ jobs:
         with:
           command: test
           args: --all-features --no-fail-fast
+
+      - name: Test + Coverage
+        # -Z flag is available only on rust nightly
+        if: ${{ matrix.coverage == true }}
+        run: rustup update ${{ matrix.rust }}
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Generate coverage data
+        run: cargo llvm-cov --all-features --workspace --codecov --output-path lcov.info
+
+      - name: CodeCov - Upload coverage data
+        if: ${{ matrix.coverage == true }}
+        uses: codecov/codecov-action@v4
+        with:
+          files: lcov.info
+          fail_ci_if_error: false
 
   rustfmt:
     name: Cargo Fmt
