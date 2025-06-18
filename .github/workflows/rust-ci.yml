@@ -28,8 +28,8 @@ jobs:
         rust: [ stable, beta ]
         fedora: [ 42, rawhide ]
         include:
-          - rust: stable
-            fedora: 42
+          - rust: nightly
+            fedora: rawhide
             coverage: true
     
     runs-on: ubuntu-latest
